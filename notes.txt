@@ -1,0 +1,11 @@
+slider
+│
+├── viewport
+│   │
+│   └── track
+│       ├── A
+│       ├── B
+│       └── C
+│
+├── Previous
+└── Next
