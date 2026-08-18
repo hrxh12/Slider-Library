@@ -1,7 +1,11 @@
 import{useEffect, useState} from "react";
 
-function Slider({slides, loop = false, slidesPerView=1, autoplay = false, autoplayInterval = 3000}) {
+function Slider({slides, loop = false, slidesPerView=1, autoplay = false, autoplayInterval = 3000, pauseOnHover=true, pauseOnInteraction=true}) {
     const [currentIndex, setCurrentIndex] = useState(0);
+    // Is the mouse currently over the slider?
+    const [isHovered, setIsHovered] = useState(false);
+    // Did the user recently interact with the slider?
+    const [isInteracting, setIsInteracting] = useState(false);
 
     const goToNextSlide = () => {
         setCurrentIndex((prevIndex) => {
@@ -18,10 +22,11 @@ function Slider({slides, loop = false, slidesPerView=1, autoplay = false, autopl
     };
     const goToPreviousSlide=()=>{
         setCurrentIndex((prevIndex)=>{
+            const maxIndex=Math.max(0,slides.length-slidesPerView);
             const isFirstSlide =prevIndex === 0;
             if(isFirstSlide){
                 if(loop){
-                    return slides.length-1;
+                    return maxIndex;
                 }
                 return prevIndex;
             }
@@ -33,7 +38,64 @@ function Slider({slides, loop = false, slidesPerView=1, autoplay = false, autopl
     const goToSlide=(index)=>{
         setCurrentIndex(index);
     };
+    useEffect(()=>{
+        if(!autoplay){
+            return;
+        }
 
+        //isPaused
+        if(isHovered){
+            return;
+        }
+
+        //isInteracting
+        if(isInteracting){
+            return;
+        }
+
+        //create a timer.
+        const timer=setInterval(()=>{
+            goToNextSlide();
+        },autoplayInterval);
+
+        return ()=>{
+            clearInterval(timer);
+        };
+    },[autoplay,autoplayInterval,isHovered,isInteracting]);
+
+
+    useEffect(() => {
+        if (!isInteracting) return;
+
+        const timer = setTimeout(() => {
+            setIsInteracting(false);
+        }, autoplayInterval);
+
+        return () => {
+            clearTimeout(timer);
+        };
+    }, [isInteracting, autoplayInterval]);
+    
+
+    useEffect(()=>{
+        const handleKeyDown=(event)=>{
+            //Right
+            if(event.key==="ArrowRight"){
+                goToNextSlide();
+            }
+
+            //left
+            if(event.key==="ArrowLeft"){
+                goToPreviousSlide();
+            }
+        };
+
+        window.addEventListener("keydown",handleKeyDown);
+
+        return()=>{
+            window.removeEventListener("keydown",handleKeyDown);
+        };
+    },[]);
     //empty slides
 
     if(!slides||slides.length===0){
@@ -44,23 +106,25 @@ function Slider({slides, loop = false, slidesPerView=1, autoplay = false, autopl
         );
     }
 
-    useEffect(()=>{
-        if(!autoplay){
-            return;
-        }
-        //create a timer.
-        const timer=setInterval(()=>{
-            goToNextSlide();
-        },autoplayInterval);
-
-        return ()=>{
-            clearInterval(timer);
-        };
-    },[autoplay,autoplayInterval]);
-
     return(
         <div className="w-full max-w-4xl mx-auto px-4"> 
-        <div className="w-full overflow-hidden rounded-2xl shadow-lg">
+        <div 
+        className="w-full overflow-hidden rounded-2xl shadow-lg"
+        // {/*Mouse Enters */}
+        onMouseEnter={()=>{
+            if(pauseOnHover){
+                setIsHovered(true);
+            }
+        }}
+        // {/* Mouse Leave */}
+        onMouseLeave={()=>{
+        if(pauseOnHover){
+                setIsHovered(false);
+            }
+        }}        
+        >
+
+
             <div 
                 className="flex transition-transform duration-300"
                 style={{
@@ -88,10 +152,18 @@ function Slider({slides, loop = false, slidesPerView=1, autoplay = false, autopl
             </div>
         </div>
             <button
-            onClick={goToPreviousSlide}
+            onClick={()=>{
+                if(pauseOnInteraction){
+                    setIsInteracting(true);
+                }
+                goToPreviousSlide()}}
             className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-gray-800 hover:bg-gray-700 shadow flex items-center justify-center text-white">← </button>
             <button 
-            onClick={goToNextSlide}
+            onClick={()=>{
+                if(pauseOnInteraction){
+                    setIsInteracting(true);
+                }
+                goToNextSlide()}}
             className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-gray-800 hover:bg-gray-700 shadow flex items-center justify-center text-white">→</button>
             
             {/* Dots Navigation */}
@@ -100,7 +172,11 @@ function Slider({slides, loop = false, slidesPerView=1, autoplay = false, autopl
                 {slides.map((slide,index)=>(
                     <button
                     key={slide.id}
-                    onClick={()=>goToSlide(index)}
+                    onClick={()=>{
+                        if(pauseOnInteraction){
+                            setIsInteracting(true);
+                        }
+                        goToSlide(index)}}
                     className={
                         currentIndex===index ? "text-black":"text-gray-400"
                     }
