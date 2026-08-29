@@ -1,16 +1,37 @@
-# React + Vite
+# Modern React Slider Library
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A modern, customizable, responsive slider and carousel component for React applications.
 
-Currently, two official plugins are available:
+Built with React hooks and Tailwind CSS.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Fully responsive slider with Mobile, Tablet, and Desktop breakpoints
+- Touch and swipe gesture support
+- Vertical scroll detection during touch interactions
+- Keyboard navigation using Left and Right arrow keys
+- Loop support
+- Autoplay with customizable interval
+- Pause autoplay on hover
+- Pause autoplay after user interaction
+- Previous and Next navigation arrows
+- Dot navigation
+- Optional slide counter
+- Configurable gap between slides
+- Custom slide rendering using `renderSlide`
+- Additional root container styling using `className`
+- Default slide layout with image, category, title, description, author, and date
+- Support for custom React slide content
 
-## Expanding the Oxlint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## Installation
+
+### Option 1: Install from npm
+
+After publishing the package:
+
+```bash
+npm install slider-library

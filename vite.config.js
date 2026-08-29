@@ -8,4 +8,19 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-})
+  build:{
+    copyPublicDir: false,
+    lib:{
+      entry:"./src/index.js",
+      formats: ["es"],
+      fileName:"slider-library"
+    },
+    rollupOptions:{
+      external:[
+        "react",
+        "react-dom",
+        "react/jsx-runtime",
+      ]
+    }
+  }
+});
